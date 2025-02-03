@@ -1,4 +1,7 @@
-import { initializeServer, startServer } from "./server"
+import 'reflect-metadata'; // Importar al inicio
+import { startServer } from "./server"
+import * as dotenv from 'dotenv';
+dotenv.config(); // Carga las variables de entorno desde .env
 
 process.on('unhandledRejection', (err) => {
     console.error(err)
