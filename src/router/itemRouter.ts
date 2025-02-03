@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { Server } from '@hapi/hapi';
 import { ItemHandlers } from '../handlers/ItemHandler';
-import { createItemSchema, updateItemSchema } from '../validators/itemValidator';
+import { createItemSchema, deleteItemSchema, getItemByIdSchema, updateItemSchema } from '../validators/itemValidator';
 import { handleValidationError } from '../validators/validationHandler';
 
 export const itemRoutes = (server: Server): void => {
@@ -40,9 +40,7 @@ export const itemRoutes = (server: Server): void => {
                 notes: 'Retorna un item específico',
                 tags: ['api', 'items'],
                 validate: {
-                    params: Joi.object({
-                        id: Joi.number().integer().required().description('El ID del item'),
-                    }),
+                    params: getItemByIdSchema
                 },
             },
             handler: ItemHandlers.getItemById
@@ -85,9 +83,7 @@ export const itemRoutes = (server: Server): void => {
                 notes: 'Elimina un item por su ID',
                 tags: ['api', 'items'],
                 validate: {
-                    params: Joi.object({
-                        id: Joi.number().integer().required().description('El ID del item a eliminar'),
-                    }),
+                    params: deleteItemSchema
                 },
             },
             handler: ItemHandlers.deleteItem
