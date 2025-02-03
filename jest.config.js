@@ -1,5 +1,8 @@
 module.exports = {
+    preset: "ts-jest",
+    testEnvironment: "node",
+    moduleFileExtensions: ["ts", "js"],
     transform: {
-        '^.+\\.(t|j)sx?$': '@swc/jest',
+        "^.+\\.ts$": "ts-jest",
     },
-}
+};

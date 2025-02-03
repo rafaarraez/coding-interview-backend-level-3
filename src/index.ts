@@ -8,4 +8,8 @@ process.on('unhandledRejection', (err) => {
     process.exit(1)
 })
 
-await startServer()
+const initServer = async() => {
+    await startServer()
+}
+
+initServer();
