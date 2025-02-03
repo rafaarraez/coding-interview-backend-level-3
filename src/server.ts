@@ -5,63 +5,77 @@ import HapiSwagger from 'hapi-swagger';
 import { itemRoutes } from './router/itemRouter';
 import { AppDataSource } from './config/database';
 import * as dotenv from 'dotenv';
-dotenv.config(); // Carga las variables de entorno desde .env
 
-export const getServer = async (): Promise<Server> => {
-    const server = Hapi.server({
-        host: 'localhost',
-        port: process.env.PORT || 3000,
-    })
+// Cargar variables de entorno al inicio
+dotenv.config();
 
+const HOST = process.env.HOST || 'localhost';
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+
+/**
+ * Inicializa la base de datos si no está conectada.
+ */
+const initializeDatabase = async () => {
     if (!AppDataSource.isInitialized) {
         try {
             await AppDataSource.initialize();
-            console.log('Database connected');
+            console.log('✅ Database connected');
         } catch (err) {
-            console.error('Error connecting to the database:', err);
-            process.exit(1);
+            console.error('❌ Error connecting to the database:', err);
+            throw new Error('Database initialization failed');
         }
     }
+};
 
-    // Opciones de Swagger
+/**
+ * Configura y devuelve una instancia del servidor Hapi.
+ */
+export const getServer = async (): Promise<Server> => {
+    await initializeDatabase();
+
+    const server = Hapi.server({ host: HOST, port: PORT });
+
+    // Configuración de Swagger
     const swaggerOptions = {
         info: {
             title: 'API Documentation',
-            version: '1.0.0'
+            version: '1.0.0',
         },
-        // Puedes agregar más opciones de configuración si lo deseas
     };
 
     // Registrar plugins
-    await server.register([
-        Inert,
-        Vision,
-        {
-            plugin: HapiSwagger,
-            options: swaggerOptions
-        }
+    await Promise.all([
+        server.register(Inert),
+        server.register(Vision),
+        server.register({ plugin: HapiSwagger, options: swaggerOptions }),
     ]);
 
+    // Registrar rutas
+    itemRoutes(server);
 
-    itemRoutes(server)
-    return server
-}
+    return server;
+};
 
-export const initializeServer = async () => {
-    const server = await getServer()
-    await server.initialize()
-    return server
-}
+/**
+ * Inicializa el servidor sin arrancarlo (para pruebas).
+ */
+export const initializeServer = async (): Promise<Server> => {
+    const server = await getServer();
+    await server.initialize();
+    return server;
+};
 
-export const startServer = async () => {
+/**
+ * Arranca el servidor.
+ */
+export const startServer = async (): Promise<Server> => {
     try {
-        // Inicia el servidor
-        const server = await getServer()
+        const server = await getServer();
         await server.start();
-        console.log('Server running on %s', server.info.uri);
-        return server
+        console.log(`🚀 Server running at ${server.info.uri}`);
+        return server;
     } catch (err) {
-        console.error('Error starting the application:', err);
-        process.exit(1); // Termina la aplicación si hay un error
+        console.error('❌ Error starting the application:', err);
+        process.exit(1);
     }
 };
