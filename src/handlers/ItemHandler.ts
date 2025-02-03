@@ -1,6 +1,5 @@
 import { Request, ResponseToolkit } from '@hapi/hapi';
 import { ItemService } from '../services/itemService';
-import { Item } from '../entities/Item';
 
 export class ItemHandlers {
     static async getAllItems(request: Request, h: ResponseToolkit) {
@@ -15,9 +14,9 @@ export class ItemHandlers {
     static async getItemById(request: Request, h: ResponseToolkit) {
         const id = parseInt(request.params.id, 10);
         const item = await ItemService.getItemById(id);
-        
+
         if (!item) return h.response({ message: 'Item not found' }).code(404);
-            
+
         return h.response(item).code(200);
     }
 
@@ -25,8 +24,8 @@ export class ItemHandlers {
         const { name, price } = request.payload as { name: string; price: number };
 
         if (price < 0) return h.response({ errors: [{ field: 'price', message: 'Field "price" cannot be negative' }] }).code(400);
-        if(!name || price === undefined ) return h.response({ errors: [{ field: 'price', message: 'Field "price" is required' }] }).code(400);
-       
+        if (!name || price === undefined) return h.response({ errors: [{ field: 'price', message: 'Field "price" is required' }] }).code(400);
+
         const item = await ItemService.createItem(name, price);
         return h.response(item).code(201);
     }

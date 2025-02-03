@@ -1,5 +1,5 @@
 import { Server } from '@hapi/hapi';
-import { ItemHandlers } from '../controllers/itemController';
+import { ItemHandlers } from '../handlers/ItemHandler';
 
 export const itemRoutes = (server: Server) => {
     server.route([
