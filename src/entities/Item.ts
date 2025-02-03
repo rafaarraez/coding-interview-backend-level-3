@@ -8,6 +8,6 @@ export class Item {
     @Column('varchar')
     name: string;
 
-    @Column('decimal', { precision: 10, scale: 2 })
+    @Column({ type: "integer" })
     price: number;
 }

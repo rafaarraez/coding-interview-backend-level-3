@@ -1,5 +1,4 @@
 import Hapi, { Server } from '@hapi/hapi'
-import { defineRoutes } from './routes'
 import { itemRoutes } from './router/itemRouter'
 import { AppDataSource } from './config/database';
 import * as dotenv from 'dotenv';
@@ -10,6 +9,17 @@ export const getServer = async (): Promise<Server> => {
         host: 'localhost',
         port: process.env.PORT || 3000,
     })
+
+    if (!AppDataSource.isInitialized) {
+        try {
+            await AppDataSource.initialize();
+            console.log('Database connected');
+        } catch (err) {
+            console.error('Error connecting to the database:', err);
+            process.exit(1);
+        }
+    }
+
     itemRoutes(server)
     return server
 }
@@ -22,10 +32,6 @@ export const initializeServer = async () => {
 
 export const startServer = async () => {
     try {
-        //DB conection
-        await AppDataSource.initialize();
-        console.log('Database connected');
-
         // Inicia el servidor
         const server = await getServer()
         await server.start();
