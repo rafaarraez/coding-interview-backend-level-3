@@ -1,5 +1,11 @@
 import Joi from 'joi';
 
+export const getItemByIdSchema = Joi.object({
+    id: Joi.number().integer().required().description('Please add item id'),
+})
+
+export const deleteItemSchema = getItemByIdSchema;
+
 export const createItemSchema = Joi.object({
     name: Joi.string().trim().required().messages({
         'string.empty': 'Field "name" cannot be empty',
