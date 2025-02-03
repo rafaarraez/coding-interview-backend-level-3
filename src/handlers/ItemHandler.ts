@@ -1,5 +1,7 @@
 import { Request, ResponseToolkit } from '@hapi/hapi';
 import { ItemService } from '../services/itemService';
+import { createItemSchema, updateItemSchema } from '../validators/itemValidator';
+import { CreateItemPayload, UpdateItemPayload } from '../types/item';
 
 export class ItemHandlers {
     static async getAllItems(request: Request, h: ResponseToolkit) {
@@ -28,11 +30,15 @@ export class ItemHandlers {
 
     static async createItem(request: Request, h: ResponseToolkit) {
         try {
-            const { name, price } = request.payload as { name: string; price: number };
-
-            if (price < 0) return h.response({ errors: [{ field: 'price', message: 'Field "price" cannot be negative' }] }).code(400);
-            if (!name || price === undefined) return h.response({ errors: [{ field: 'price', message: 'Field "price" is required' }] }).code(400);
-
+            const { error, value } = createItemSchema.validate(request.payload, { abortEarly: false });
+            if (error) {
+                const errors = error.details.map(detail => ({
+                    field: detail.context?.key,
+                    message: detail.message
+                }));
+                return h.response({ errors }).code(400);
+            }
+            const { name, price } = value as CreateItemPayload;
             const item = await ItemService.createItem(name, price);
             return h.response(item).code(201);
         } catch (error) {
@@ -44,10 +50,15 @@ export class ItemHandlers {
     static async updateItem(request: Request, h: ResponseToolkit) {
         try {
             const id = parseInt(request.params.id, 10);
-            const { name, price } = request.payload as { name: string; price: number };
-            if (price < 0) {
-                return h.response({ errors: [{ field: 'price', message: 'Field "price" cannot be negative' }] }).code(400);
+            const { error, value } = updateItemSchema.validate(request.payload, { abortEarly: false });
+            if (error) {
+                const errors = error.details.map(detail => ({
+                    field: detail.context?.key,
+                    message: detail.message
+                }));
+                return h.response({ errors }).code(400);
             }
+            const { name, price } = value as UpdateItemPayload;
             const item = await ItemService.updateItem(id, name, price);
             if (item) {
                 return h.response(item).code(200);

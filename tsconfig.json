@@ -1,34 +1,16 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
-        "lib": [
-            "esnext"
-        ],
-        "moduleDetection": "force",
-        "module": "ESNext",
-        "moduleResolution": "node",
-        "types": [
-            "node",
-            "jest"
-        ],
-        "resolveJsonModule": true,
-        "allowJs": true,
-        "rootDir": "./src",
-        "outDir": "./dist",
-        "isolatedModules": true,
-        "esModuleInterop": true,
+        "target": "ES2020",
+        "module": "CommonJS",
+        "strict": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
         "strictPropertyInitialization": false,
-        "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "skipLibCheck": true
     },
     "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
+        "src/**/*"
     ]
 }

@@ -1,5 +1,8 @@
-import Hapi, { Server } from '@hapi/hapi'
-import { itemRoutes } from './router/itemRouter'
+import Hapi, { Server } from '@hapi/hapi';
+import Inert from '@hapi/inert';
+import Vision from '@hapi/vision';
+import HapiSwagger from 'hapi-swagger';
+import { itemRoutes } from './router/itemRouter';
 import { AppDataSource } from './config/database';
 import * as dotenv from 'dotenv';
 dotenv.config(); // Carga las variables de entorno desde .env
@@ -19,6 +22,26 @@ export const getServer = async (): Promise<Server> => {
             process.exit(1);
         }
     }
+
+    // Opciones de Swagger
+    const swaggerOptions = {
+        info: {
+            title: 'API Documentation',
+            version: '1.0.0'
+        },
+        // Puedes agregar más opciones de configuración si lo deseas
+    };
+
+    // Registrar plugins
+    await server.register([
+        Inert,
+        Vision,
+        {
+            plugin: HapiSwagger,
+            options: swaggerOptions
+        }
+    ]);
+
 
     itemRoutes(server)
     return server
