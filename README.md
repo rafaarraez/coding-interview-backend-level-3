@@ -1,3 +1,33 @@
+## Instalación
+
+```bash
+$ npm install
+```
+
+## Ejecución de la app
+
+```bash
+# run tests
+$ npm run test
+
+# development
+$ npm run dev
+
+# build
+$ npm run build
+
+# production mode
+$ npm run start
+
+# using Docker
+$ docker-compose up --build
+```
+
+## Docs: 
+[http://localhost:3000/documentation/](http://localhost:3000/documentation/)
+
+
+--------------------------------------------------------------------
 # Bienvenido al coding-interview-backend-level-3 - Parte I
 
 ## Descripción
