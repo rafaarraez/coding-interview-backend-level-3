@@ -9,7 +9,7 @@ import * as dotenv from 'dotenv';
 // Cargar variables de entorno al inicio
 dotenv.config();
 
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '127.0.0.1';
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 /**
@@ -72,10 +72,13 @@ export const startServer = async (): Promise<Server> => {
     try {
         const server = await getServer();
         await server.start();
-        console.log(`🚀 Server running at ${server.info.uri}`);
+        console.log(`🚀 Server running at http://${getDisplayHost(server.info.host)}:${server.info.port}`);
         return server;
     } catch (err) {
         console.error('❌ Error starting the application:', err);
         process.exit(1);
     }
 };
+
+const getDisplayHost = (host: string): string =>
+    host === '0.0.0.0' || host === '::' ? 'localhost' : host;

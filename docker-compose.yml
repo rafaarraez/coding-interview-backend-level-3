@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -8,6 +6,10 @@ services:
       - '3000:3000' # Mapea el puerto 3000 del contenedor al puerto 3000 del host
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - /usr/src/app/node_modules # Evita sobrescribir node_modules en el contenedor
+      - /usr/src/app/dist # Excluye el directorio dist del volumen
     environment:
       - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+    restart: unless-stopped # Reinicia el contenedor automáticamente a menos que se detenga manualmente
